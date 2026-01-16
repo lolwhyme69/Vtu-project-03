@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Agriculture – NPK Soil Analysis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+      color: #2e3b2e;
+    }
+
+    header {
+      background: #2e7d32;
+      color: white;
+      padding: 25px 15px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin-top: 8px;
+      font-size: 15px;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    section h2 {
+      margin-top: 0;
+      color: #2e7d32;
+    }
+
+    .analyzer {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    label {
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      grid-column: 1 / -1;
+      padding: 12px;
+      font-size: 16px;
+      background: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #256628;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 8px;
+      background: #f1f8e9;
+      border-left: 6px solid #2e7d32;
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Smart Agriculture – Soil Health Analysis</h1>
+  <p>Using NPK values to understand soil condition and improve crop yield</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>Problem Statement</h2>
+    <p>
+      In agriculture, farmers often apply fertilizers without knowing the exact
+      nutrient condition of their soil. This leads to nutrient imbalance,
+      reduced crop yield, increased cost, and long-term soil degradation.
+      Traditional soil testing methods are time-consuming and not easily
+      understandable for quick decision-making.
+    </p>
+  </section>
+
+  <section>
+    <h2>Proposed Solution</h2>
+    <p>
+      This system analyzes soil health using Nitrogen (N), Phosphorus (P), and
+      Potassium (K) values. By entering NPK data obtained from a sensor or lab
+      test, the system instantly determines the soil condition and provides a
+      clear interpretation, helping farmers take informed fertilizer and crop
+      decisions.
+    </p>
+  </section>
+
+  <section>
+    <h2>NPK Soil Analyzer</h2>
+    <div class="analyzer">
+      <div>
+        <label for="n">Nitrogen (N)</label>
+        <input type="number" id="n" placeholder="e.g. 45">
+      </div>
+
+      <div>
+        <label for="p">Phosphorus (P)</label>
+        <input type="number" id="p" placeholder="e.g. 30">
+      </div>
+
+      <div>
+        <label for="k">Potassium (K)</label>
+        <input type="number" id="k" placeholder="e.g. 40">
+      </div>
+
+      <button onclick="analyzeSoil()">Analyze Soil Condition</button>
+    </div>
+
+    <div id="result" class="result"></div>
+  </section>
+
+  <section>
+    <h2>Benefits</h2>
+    <ul>
+      <li>Quick understanding of soil nutrient status</li>
+      <li>Prevents overuse or underuse of fertilizers</li>
+      <li>Improves crop productivity</li>
+      <li>Simple and farmer-friendly interpretation</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  Smart Agriculture Project – NPK Based Soil Analysis
+</footer>
+
+<script>
+  function analyzeSoil() {
+    const n = Number(document.getElementById("n").value);
+    const p = Number(document.getElementById("p").value);
+    const k = Number(document.getElementById("k").value);
+
+    let message = "";
+
+    if (n < 40 || p < 20 || k < 20) {
+      message = "Poor Soil Condition: Nutrient levels are low. Fertilizer supplementation is required.";
+    } else if (n >= 40 && n <= 80 && p >= 20 && p <= 50 && k >= 20 && k <= 50) {
+      message = "Moderate Soil Condition: Soil is suitable for most crops with balanced fertilization.";
+    } else if (n > 80 && p > 50 && k > 50) {
+      message = "Rich Soil Condition: High nutrient content. Excess fertilizer application should be avoided.";
+    } else {
+      message = "Unbalanced Soil Condition: One or more nutrients are outside the optimal range.";
+    }
+
+    const resultBox = document.getElementById("result");
+    resultBox.style.display = "block";
+    resultBox.textContent = message;
+  }
+</script>
+
+</body>
+</html>
