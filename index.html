@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Smart Agriculture – NPK Soil Analysis</title>
+  <title>Smart Agriculture – Interactive NPK Analyzer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
@@ -16,19 +16,13 @@
     header {
       background: #2e7d32;
       color: white;
-      padding: 25px 15px;
+      padding: 30px 15px;
       text-align: center;
     }
 
     header h1 {
       margin: 0;
-      font-size: 28px;
-    }
-
-    header p {
-      margin-top: 8px;
-      font-size: 15px;
-      opacity: 0.9;
+      font-size: 30px;
     }
 
     main {
@@ -39,18 +33,18 @@
 
     section {
       background: white;
-      padding: 20px;
+      padding: 22px;
       margin-bottom: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     }
 
-    section h2 {
-      margin-top: 0;
+    h2 {
       color: #2e7d32;
+      margin-top: 0;
     }
 
-    .analyzer {
+    .inputs {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
@@ -72,26 +66,50 @@
 
     button {
       grid-column: 1 / -1;
-      padding: 12px;
+      padding: 14px;
       font-size: 16px;
       background: #2e7d32;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
     }
 
     button:hover {
       background: #256628;
+      transform: scale(1.02);
     }
 
     .result {
       margin-top: 20px;
-      padding: 18px;
-      border-radius: 8px;
-      background: #f1f8e9;
-      border-left: 6px solid #2e7d32;
+      padding: 20px;
+      border-radius: 10px;
       display: none;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .good {
+      background: #e8f5e9;
+      border-left: 6px solid #2e7d32;
+    }
+
+    .medium {
+      background: #fffde7;
+      border-left: 6px solid #f9a825;
+    }
+
+    .bad {
+      background: #ffebee;
+      border-left: 6px solid #c62828;
+    }
+
+    .nutrients {
+      margin-top: 15px;
+    }
+
+    .nutrients div {
+      margin-bottom: 6px;
     }
 
     footer {
@@ -100,13 +118,18 @@
       font-size: 14px;
       color: #555;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Smart Agriculture – Soil Health Analysis</h1>
-  <p>Using NPK values to understand soil condition and improve crop yield</p>
+  <h1>Smart Agriculture – Interactive Soil Analysis</h1>
+  <p>NPK-based decision support for better crop productivity</p>
 </header>
 
 <main>
@@ -114,86 +137,99 @@
   <section>
     <h2>Problem Statement</h2>
     <p>
-      In agriculture, farmers often apply fertilizers without knowing the exact
-      nutrient condition of their soil. This leads to nutrient imbalance,
-      reduced crop yield, increased cost, and long-term soil degradation.
-      Traditional soil testing methods are time-consuming and not easily
-      understandable for quick decision-making.
+      Farmers often apply fertilizers without knowing the actual nutrient
+      condition of soil, leading to wastage, reduced yield, and soil damage.
+      A simple and interactive system is required to instantly analyze soil
+      health using NPK values.
     </p>
   </section>
 
   <section>
-    <h2>Proposed Solution</h2>
+    <h2>Solution Overview</h2>
     <p>
-      This system analyzes soil health using Nitrogen (N), Phosphorus (P), and
-      Potassium (K) values. By entering NPK data obtained from a sensor or lab
-      test, the system instantly determines the soil condition and provides a
-      clear interpretation, helping farmers take informed fertilizer and crop
-      decisions.
+      This web-based tool analyzes Nitrogen, Phosphorus, and Potassium values
+      obtained from sensors or lab tests and dynamically evaluates soil health,
+      nutrient balance, and fertilizer recommendations.
     </p>
   </section>
 
   <section>
     <h2>NPK Soil Analyzer</h2>
-    <div class="analyzer">
+
+    <div class="inputs">
       <div>
-        <label for="n">Nitrogen (N)</label>
-        <input type="number" id="n" placeholder="e.g. 45">
+        <label>Nitrogen (N)</label>
+        <input type="number" id="n" placeholder="0 – 100">
       </div>
 
       <div>
-        <label for="p">Phosphorus (P)</label>
-        <input type="number" id="p" placeholder="e.g. 30">
+        <label>Phosphorus (P)</label>
+        <input type="number" id="p" placeholder="0 – 100">
       </div>
 
       <div>
-        <label for="k">Potassium (K)</label>
-        <input type="number" id="k" placeholder="e.g. 40">
+        <label>Potassium (K)</label>
+        <input type="number" id="k" placeholder="0 – 100">
       </div>
 
-      <button onclick="analyzeSoil()">Analyze Soil Condition</button>
+      <button onclick="analyze()">Analyze Soil</button>
     </div>
 
-    <div id="result" class="result"></div>
-  </section>
+    <div id="result" class="result">
+      <h3 id="status"></h3>
+      <p id="message"></p>
 
-  <section>
-    <h2>Benefits</h2>
-    <ul>
-      <li>Quick understanding of soil nutrient status</li>
-      <li>Prevents overuse or underuse of fertilizers</li>
-      <li>Improves crop productivity</li>
-      <li>Simple and farmer-friendly interpretation</li>
-    </ul>
+      <div class="nutrients" id="nutrientStatus"></div>
+    </div>
   </section>
 
 </main>
 
 <footer>
-  Smart Agriculture Project – NPK Based Soil Analysis
+  Smart Agriculture Mini Project – NPK Soil Health System
 </footer>
 
 <script>
-  function analyzeSoil() {
+  function analyze() {
     const n = Number(document.getElementById("n").value);
     const p = Number(document.getElementById("p").value);
     const k = Number(document.getElementById("k").value);
 
-    let message = "";
+    const result = document.getElementById("result");
+    const status = document.getElementById("status");
+    const message = document.getElementById("message");
+    const nutrientStatus = document.getElementById("nutrientStatus");
+
+    let quality = "";
+    let className = "";
 
     if (n < 40 || p < 20 || k < 20) {
-      message = "Poor Soil Condition: Nutrient levels are low. Fertilizer supplementation is required.";
-    } else if (n >= 40 && n <= 80 && p >= 20 && p <= 50 && k >= 20 && k <= 50) {
-      message = "Moderate Soil Condition: Soil is suitable for most crops with balanced fertilization.";
-    } else if (n > 80 && p > 50 && k > 50) {
-      message = "Rich Soil Condition: High nutrient content. Excess fertilizer application should be avoided.";
+      quality = "Poor Soil Condition";
+      className = "bad";
+      message.textContent =
+        "Soil nutrients are deficient. Fertilizer application is required to improve crop growth.";
+    } else if (n <= 80 && p <= 50 && k <= 50) {
+      quality = "Moderate Soil Condition";
+      className = "medium";
+      message.textContent =
+        "Soil nutrients are balanced. Suitable for most crops with controlled fertilization.";
     } else {
-      message = "Unbalanced Soil Condition: One or more nutrients are outside the optimal range.";
+      quality = "Rich Soil Condition";
+      className = "good";
+      message.textContent =
+        "Soil contains high nutrient levels. Avoid excess fertilizer usage.";
     }
 
-    const resultBox = document.getElementById("result");
-    resultBox.style.display = "block";
-    resultBox.textContent = message;
+    status.textContent = quality;
+    result.className = "result " + className;
+
+    nutrientStatus.innerHTML = `
+      <div>Nitrogen: ${n < 40 ? "Low" : n > 80 ? "High" : "Optimal"}</div>
+      <div>Phosphorus: ${p < 20 ? "Low" : p > 50 ? "High" : "Optimal"}</div>
+      <div>Potassium: ${k < 20 ? "Low" : k > 50 ? "High" : "Optimal"}</div>
+    `;
+
+    result.style.display = "block";
   }
 </script>
 
