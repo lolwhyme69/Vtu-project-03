@@ -1,236 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Smart Agriculture – Interactive NPK Analyzer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>AgriSense – Soil Intelligence Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
-      color: #2e3b2e;
-    }
+<style>
+:root {
+  --primary:#1565c0;
+  --secondary:#00bcd4;
+  --danger:#d32f2f;
+  --warn:#fbc02d;
+  --bg:#eef5ff;
+}
 
-    header {
-      background: #2e7d32;
-      color: white;
-      padding: 30px 15px;
-      text-align: center;
-    }
+body {
+  margin:0;
+  font-family:"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:#102027;
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 30px;
-    }
+header {
+  background:linear-gradient(135deg,#0d47a1,#00acc1);
+  color:#fff;
+  padding:40px 20px;
+  text-align:center;
+}
 
-    main {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-    }
+.container {
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
 
-    section {
-      background: white;
-      padding: 22px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    }
+.card {
+  background:#fff;
+  border-radius:16px;
+  padding:24px;
+  margin-bottom:22px;
+  box-shadow:0 10px 24px rgba(0,0,0,.1);
+}
 
-    h2 {
-      color: #2e7d32;
-      margin-top: 0;
-    }
+.card h2 { color:#0d47a1; margin-top:0; }
 
-    .inputs {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
 
-    label {
-      font-weight: 600;
-    }
+input {
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:16px;
+}
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
+button {
+  margin-top:18px;
+  padding:15px;
+  width:100%;
+  background:linear-gradient(135deg,#1565c0,#00bcd4);
+  color:white;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  cursor:pointer;
+}
 
-    button {
-      grid-column: 1 / -1;
-      padding: 14px;
-      font-size: 16px;
-      background: #2e7d32;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
-    }
+.metric { margin-bottom:18px; }
 
-    button:hover {
-      background: #256628;
-      transform: scale(1.02);
-    }
+.bar {
+  height:24px;
+  border-radius:12px;
+  background:#e0e0e0;
+  overflow:hidden;
+}
 
-    .result {
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      display: none;
-      animation: fadeIn 0.4s ease-in-out;
-    }
+.bar span {
+  display:block;
+  height:100%;
+  width:0%;
+  transition:width .6s ease;
+}
 
-    .good {
-      background: #e8f5e9;
-      border-left: 6px solid #2e7d32;
-    }
+.low { background:var(--danger); }
+.mid { background:var(--warn); }
+.high { background:linear-gradient(135deg,#42a5f5,#26c6da); }
 
-    .medium {
-      background: #fffde7;
-      border-left: 6px solid #f9a825;
-    }
+.score { font-size:52px; font-weight:700; }
 
-    .bad {
-      background: #ffebee;
-      border-left: 6px solid #c62828;
-    }
+.good { color:#1565c0; }
+.warnT { color:#f9a825; }
+.badT { color:#c62828; }
 
-    .nutrients {
-      margin-top: 15px;
-    }
+.crop {
+  font-size:20px;
+  font-weight:600;
+  margin-top:10px;
+}
 
-    .nutrients div {
-      margin-bottom: 6px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      font-size: 14px;
-      color: #555;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+footer {
+  text-align:center;
+  padding:22px;
+  font-size:14px;
+  color:#555;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-  <h1>Smart Agriculture – Interactive Soil Analysis</h1>
-  <p>NPK-based decision support for better crop productivity</p>
+  <h1>AgriSense</h1>
+  <p>Soil Health Analysis & Crop Recommendation System</p>
 </header>
 
-<main>
+<div class="container">
 
-  <section>
-    <h2>Problem Statement</h2>
-    <p>
-      Farmers often apply fertilizers without knowing the actual nutrient
-      condition of soil, leading to wastage, reduced yield, and soil damage.
-      A simple and interactive system is required to instantly analyze soil
-      health using NPK values.
-    </p>
-  </section>
-
-  <section>
-    <h2>Solution Overview</h2>
-    <p>
-      This web-based tool analyzes Nitrogen, Phosphorus, and Potassium values
-      obtained from sensors or lab tests and dynamically evaluates soil health,
-      nutrient balance, and fertilizer recommendations.
-    </p>
-  </section>
-
-  <section>
-    <h2>NPK Soil Analyzer</h2>
-
-    <div class="inputs">
+  <div class="card">
+    <h2>Soil Input Panel</h2>
+    <div class="grid">
       <div>
         <label>Nitrogen (N)</label>
-        <input type="number" id="n" placeholder="0 – 100">
+        <input id="n" type="number" placeholder="0 – 100">
       </div>
-
       <div>
         <label>Phosphorus (P)</label>
-        <input type="number" id="p" placeholder="0 – 100">
+        <input id="p" type="number" placeholder="0 – 100">
       </div>
-
       <div>
         <label>Potassium (K)</label>
-        <input type="number" id="k" placeholder="0 – 100">
+        <input id="k" type="number" placeholder="0 – 100">
       </div>
-
-      <button onclick="analyze()">Analyze Soil</button>
     </div>
+    <button onclick="analyze()">Analyze Soil</button>
+  </div>
 
-    <div id="result" class="result">
-      <h3 id="status"></h3>
-      <p id="message"></p>
+  <div class="card">
+    <h2>Nutrient Visualization</h2>
+    <div class="metric">Nitrogen<div class="bar"><span id="barN"></span></div></div>
+    <div class="metric">Phosphorus<div class="bar"><span id="barP"></span></div></div>
+    <div class="metric">Potassium<div class="bar"><span id="barK"></span></div></div>
+  </div>
 
-      <div class="nutrients" id="nutrientStatus"></div>
-    </div>
-  </section>
+  <div class="card">
+    <h2>Soil Health & Crop Recommendation</h2>
+    <div id="score" class="score">–</div>
+    <p id="verdict"></p>
+    <p id="recommendation"></p>
+    <div id="crop" class="crop"></div>
+  </div>
 
-</main>
+</div>
 
 <footer>
-  Smart Agriculture Mini Project – NPK Soil Health System
+  AgriSense – Smart Agriculture Mini Project
 </footer>
 
 <script>
-  function analyze() {
-    const n = Number(document.getElementById("n").value);
-    const p = Number(document.getElementById("p").value);
-    const k = Number(document.getElementById("k").value);
+function classify(value, bar) {
+  bar.style.width = value + "%";
+  bar.className = "";
+  if (value < 40) bar.classList.add("low");
+  else if (value <= 70) bar.classList.add("mid");
+  else bar.classList.add("high");
+}
 
-    const result = document.getElementById("result");
-    const status = document.getElementById("status");
-    const message = document.getElementById("message");
-    const nutrientStatus = document.getElementById("nutrientStatus");
+function recommendCrop(n,p,k) {
+  if (n > 80 && p > 40 && k > 40) return "Recommended Crops: Rice, Sugarcane, Wheat";
+  if (n >= 50 && n <= 80 && p >= 30 && k >= 30) return "Recommended Crops: Maize, Cotton, Groundnut";
+  if (n < 40 && p < 30 && k < 30) return "Recommended Crops: Millets, Pulses, Barley";
+  if (p > 50 && k > 40) return "Recommended Crops: Potato, Tomato, Onion";
+  return "Recommended Crops: Mixed cropping or soil-specific crops";
+}
 
-    let quality = "";
-    let className = "";
+function analyze() {
+  const n = Number(nEl.value);
+  const p = Number(pEl.value);
+  const k = Number(kEl.value);
 
-    if (n < 40 || p < 20 || k < 20) {
-      quality = "Poor Soil Condition";
-      className = "bad";
-      message.textContent =
-        "Soil nutrients are deficient. Fertilizer application is required to improve crop growth.";
-    } else if (n <= 80 && p <= 50 && k <= 50) {
-      quality = "Moderate Soil Condition";
-      className = "medium";
-      message.textContent =
-        "Soil nutrients are balanced. Suitable for most crops with controlled fertilization.";
-    } else {
-      quality = "Rich Soil Condition";
-      className = "good";
-      message.textContent =
-        "Soil contains high nutrient levels. Avoid excess fertilizer usage.";
-    }
+  classify(n, barN);
+  classify(p, barP);
+  classify(k, barK);
 
-    status.textContent = quality;
-    result.className = "result " + className;
+  const avg = Math.round((n+p+k)/3);
+  score.textContent = avg;
+  score.className = "score";
 
-    nutrientStatus.innerHTML = `
-      <div>Nitrogen: ${n < 40 ? "Low" : n > 80 ? "High" : "Optimal"}</div>
-      <div>Phosphorus: ${p < 20 ? "Low" : p > 50 ? "High" : "Optimal"}</div>
-      <div>Potassium: ${k < 20 ? "Low" : k > 50 ? "High" : "Optimal"}</div>
-    `;
-
-    result.style.display = "block";
+  if (avg < 40) {
+    score.classList.add("badT");
+    verdict.textContent = "Poor Soil Health";
+    recommendation.textContent = "Soil nutrients are deficient. Use organic manure and balanced fertilizers.";
+  } else if (avg <= 70) {
+    score.classList.add("warnT");
+    verdict.textContent = "Moderate Soil Health";
+    recommendation.textContent = "Soil is suitable for cultivation with controlled fertilization.";
+  } else {
+    score.classList.add("good");
+    verdict.textContent = "Excellent Soil Health";
+    recommendation.textContent = "High nutrient levels. Avoid over-fertilization.";
   }
+
+  crop.textContent = recommendCrop(n,p,k);
+}
+
+const nEl = document.getElementById("n");
+const pEl = document.getElementById("p");
+const kEl = document.getElementById("k");
+
+const barN = document.getElementById("barN");
+const barP = document.getElementById("barP");
+const barK = document.getElementById("barK");
+
+const score = document.getElementById("score");
+const verdict = document.getElementById("verdict");
+const recommendation = document.getElementById("recommendation");
+const crop = document.getElementById("crop");
 </script>
 
 </body>
