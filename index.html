@@ -23,9 +23,19 @@ body {
 
 header {
   background:linear-gradient(135deg,#0d47a1,#00acc1);
-  color:#fff;
+  color:white;
   padding:40px 20px;
   text-align:center;
+}
+
+header h1 {
+  margin:0;
+  font-size:34px;
+}
+
+header p {
+  margin-top:10px;
+  opacity:.9;
 }
 
 .container {
@@ -35,19 +45,26 @@ header {
 }
 
 .card {
-  background:#fff;
+  background:white;
   border-radius:16px;
   padding:24px;
   margin-bottom:22px;
   box-shadow:0 10px 24px rgba(0,0,0,.1);
 }
 
-.card h2 { color:#0d47a1; margin-top:0; }
+.card h2 {
+  margin-top:0;
+  color:#0d47a1;
+}
 
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:20px;
+}
+
+label {
+  font-weight:600;
 }
 
 input {
@@ -71,9 +88,190 @@ button {
   cursor:pointer;
 }
 
-.metric { margin-bottom:18px; }
+.metric {
+  margin-bottom:18px;
+}
 
 .bar {
+  height:24px;
+  border-radius:12px;
+  background:#e0e0e0;
+  overflow:hidden;
+}
+
+.bar span {
+  display:block;
+  height:100%;
+  width:0%;
+  transition:width .6s ease;
+}
+
+.low { background:var(--danger); }
+.mid { background:var(--warn); }
+.high { background:linear-gradient(135deg,#42a5f5,#26c6da); }
+
+.score {
+  font-size:52px;
+  font-weight:700;
+}
+
+.good { color:#1565c0; }
+.warnT { color:#f9a825; }
+.badT { color:#c62828; }
+
+.cropType {
+  margin-top:12px;
+  font-size:20px;
+  font-weight:600;
+  color:#0d47a1;
+}
+
+footer {
+  text-align:center;
+  padding:22px;
+  font-size:14px;
+  color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>AgriSense</h1>
+  <p>Soil Health Analysis & Crop Type Identification System</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Problem Statement</h2>
+    <p>
+      Farmers often lack clarity about soil nutrient composition, making it
+      difficult to understand what type of crops the soil naturally supports.
+      This results in poor crop planning and inefficient fertilizer usage.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Proposed Solution</h2>
+    <p>
+      AgriSense analyzes Nitrogen, Phosphorus, and Potassium (NPK) values to
+      evaluate soil health, visualize nutrient distribution, and identify the
+      crop type that the soil naturally corresponds to.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Soil Input Panel</h2>
+    <div class="grid">
+      <div>
+        <label>Nitrogen (N)</label>
+        <input id="n" type="number" placeholder="0 – 100">
+      </div>
+      <div>
+        <label>Phosphorus (P)</label>
+        <input id="p" type="number" placeholder="0 – 100">
+      </div>
+      <div>
+        <label>Potassium (K)</label>
+        <input id="k" type="number" placeholder="0 – 100">
+      </div>
+    </div>
+    <button onclick="analyze()">Analyze Soil</button>
+  </div>
+
+  <div class="card">
+    <h2>Nutrient Visualization</h2>
+    <div class="metric">Nitrogen<div class="bar"><span id="barN"></span></div></div>
+    <div class="metric">Phosphorus<div class="bar"><span id="barP"></span></div></div>
+    <div class="metric">Potassium<div class="bar"><span id="barK"></span></div></div>
+  </div>
+
+  <div class="card">
+    <h2>Soil Health & Crop Type</h2>
+    <div id="score" class="score">–</div>
+    <p id="verdict"></p>
+    <p id="recommendation"></p>
+    <div id="cropType" class="cropType"></div>
+  </div>
+
+</div>
+
+<footer>
+  AgriSense – Smart Agriculture Mini Project
+</footer>
+
+<script>
+function classify(value, bar) {
+  bar.style.width = value + "%";
+  bar.className = "";
+  if (value < 40) bar.classList.add("low");
+  else if (value <= 70) bar.classList.add("mid");
+  else bar.classList.add("high");
+}
+
+function identifyCropType(n, p, k) {
+  if (n > 80 && p > 40 && k > 40)
+    return "Crop Type: High nutrient crop soil (Rice / Sugarcane type)";
+  if (n >= 50 && n <= 80 && p >= 30 && k >= 30)
+    return "Crop Type: Medium nutrient crop soil (Wheat / Maize type)";
+  if (p > 50 && k > 40 && n < 60)
+    return "Crop Type: Vegetable & tuber crop soil (Potato / Onion type)";
+  if (n < 40 && p < 30 && k < 30)
+    return "Crop Type: Low nutrient crop soil (Millets / Pulses type)";
+  return "Crop Type: Mixed or transitional crop soil";
+}
+
+function analyze() {
+  const n = Number(nEl.value);
+  const p = Number(pEl.value);
+  const k = Number(kEl.value);
+
+  classify(n, barN);
+  classify(p, barP);
+  classify(k, barK);
+
+  const avg = Math.round((n + p + k) / 3);
+  score.textContent = avg;
+  score.className = "score";
+
+  if (avg < 40) {
+    score.classList.add("badT");
+    verdict.textContent = "Poor Soil Health";
+    recommendation.textContent =
+      "Soil nutrients are deficient and may require enrichment.";
+  } else if (avg <= 70) {
+    score.classList.add("warnT");
+    verdict.textContent = "Moderate Soil Health";
+    recommendation.textContent =
+      "Soil nutrients are balanced for common crop cultivation.";
+  } else {
+    score.classList.add("good");
+    verdict.textContent = "Excellent Soil Health";
+    recommendation.textContent =
+      "Soil contains high nutrient levels.";
+  }
+
+  cropType.textContent = identifyCropType(n, p, k);
+}
+
+const nEl = document.getElementById("n");
+const pEl = document.getElementById("p");
+const kEl = document.getElementById("k");
+
+const barN = document.getElementById("barN");
+const barP = document.getElementById("barP");
+const barK = document.getElementById("barK");
+
+const score = document.getElementById("score");
+const verdict = document.getElementById("verdict");
+const recommendation = document.getElementById("recommendation");
+const cropType = document.getElementById("cropType");
+</script>
+
+</body>
+</html>.bar {
   height:24px;
   border-radius:12px;
   background:#e0e0e0;
