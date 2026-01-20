@@ -120,7 +120,7 @@ button {
 .badT { color:#c62828; }
 
 .cropType {
-  margin-top:12px;
+  margin-top:14px;
   font-size:20px;
   font-weight:600;
   color:#0d47a1;
@@ -139,7 +139,7 @@ footer {
 
 <header>
   <h1>AgriSense</h1>
-  <p>Soil Health Analysis & Crop Type Identification System</p>
+  <p>Soil Health Analysis and Crop Type Identification System</p>
 </header>
 
 <div class="container">
@@ -147,18 +147,18 @@ footer {
   <div class="card">
     <h2>Problem Statement</h2>
     <p>
-      Farmers often lack clarity about soil nutrient composition, making it
-      difficult to understand what type of crops the soil naturally supports.
-      This results in poor crop planning and inefficient fertilizer usage.
+      Farmers often apply fertilizers without understanding the natural nutrient
+      composition of soil. This leads to inefficient crop planning, reduced yield,
+      and long-term soil degradation.
     </p>
   </div>
 
   <div class="card">
     <h2>Proposed Solution</h2>
     <p>
-      AgriSense analyzes Nitrogen, Phosphorus, and Potassium (NPK) values to
-      evaluate soil health, visualize nutrient distribution, and identify the
-      crop type that the soil naturally corresponds to.
+      AgriSense analyzes Nitrogen, Phosphorus, and Potassium (NPK) values to assess
+      soil health, visualize nutrient distribution, and identify the crop category
+      the soil naturally supports.
     </p>
   </div>
 
@@ -189,10 +189,10 @@ footer {
   </div>
 
   <div class="card">
-    <h2>Soil Health & Crop Type</h2>
+    <h2>Soil Health Index and Crop Type</h2>
     <div id="score" class="score">–</div>
     <p id="verdict"></p>
-    <p id="recommendation"></p>
+    <p id="summary"></p>
     <div id="cropType" class="cropType"></div>
   </div>
 
@@ -213,14 +213,14 @@ function classify(value, bar) {
 
 function identifyCropType(n, p, k) {
   if (n > 80 && p > 40 && k > 40)
-    return "Crop Type: High nutrient crop soil (Rice / Sugarcane type)";
+    return "Crop Type Identified: High nutrient crop soil (Rice / Sugarcane)";
   if (n >= 50 && n <= 80 && p >= 30 && k >= 30)
-    return "Crop Type: Medium nutrient crop soil (Wheat / Maize type)";
+    return "Crop Type Identified: Medium nutrient crop soil (Wheat / Maize)";
   if (p > 50 && k > 40 && n < 60)
-    return "Crop Type: Vegetable & tuber crop soil (Potato / Onion type)";
+    return "Crop Type Identified: Vegetable and tuber crop soil (Potato / Onion)";
   if (n < 40 && p < 30 && k < 30)
-    return "Crop Type: Low nutrient crop soil (Millets / Pulses type)";
-  return "Crop Type: Mixed or transitional crop soil";
+    return "Crop Type Identified: Low nutrient crop soil (Millets / Pulses)";
+  return "Crop Type Identified: Mixed or transitional crop soil";
 }
 
 function analyze() {
@@ -238,19 +238,16 @@ function analyze() {
 
   if (avg < 40) {
     score.classList.add("badT");
-    verdict.textContent = "Poor Soil Health";
-    recommendation.textContent =
-      "Soil nutrients are deficient and may require enrichment.";
+    verdict.textContent = "Soil Health Index: Poor";
+    summary.textContent = "Overall nutrient availability is low.";
   } else if (avg <= 70) {
     score.classList.add("warnT");
-    verdict.textContent = "Moderate Soil Health";
-    recommendation.textContent =
-      "Soil nutrients are balanced for common crop cultivation.";
+    verdict.textContent = "Soil Health Index: Moderate";
+    summary.textContent = "Overall nutrient availability is balanced.";
   } else {
     score.classList.add("good");
-    verdict.textContent = "Excellent Soil Health";
-    recommendation.textContent =
-      "Soil contains high nutrient levels.";
+    verdict.textContent = "Soil Health Index: Excellent";
+    summary.textContent = "Overall nutrient availability is high.";
   }
 
   cropType.textContent = identifyCropType(n, p, k);
@@ -266,7 +263,7 @@ const barK = document.getElementById("barK");
 
 const score = document.getElementById("score");
 const verdict = document.getElementById("verdict");
-const recommendation = document.getElementById("recommendation");
+const summary = document.getElementById("summary");
 const cropType = document.getElementById("cropType");
 </script>
 
